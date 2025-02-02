@@ -24,7 +24,9 @@ Shader "Dither 3D/Cutout"
         _InputOffset ("Offset", Range(-1,1)) = 0
 
         [Header(Dither Settings)]
-        _DitherTex ("Dither 3D Texture", 3D) = "white" {}
+        [DitherPatternProperty] _DitherMode ("Pattern", Int) = 3
+        [HideInInspector] _DitherTex ("Dither 3D Texture", 3D) = "" {}
+        [HideInInspector] _DitherRampTex ("Dither Ramp Texture", 2D) = "white" {}
         _Scale ("Dot Scale", Range(2,10)) = 5.0
         _SizeVariability ("Dot Size Variability", Range(0,1)) = 0
         _Contrast ("Dot Contrast", Range(0,2)) = 1

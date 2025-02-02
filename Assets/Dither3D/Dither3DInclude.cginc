@@ -7,6 +7,7 @@
  */
 
 sampler3D _DitherTex;
+sampler2D _DitherRampTex;
 float4 _DitherTex_TexelSize;
 float _Scale;
 float _SizeVariability;
@@ -42,8 +43,8 @@ fixed4 GetDither3D_(float2 uv_DitherTex, float4 screenPos, float2 dx, float2 dy,
 
     // Lookup brightness to make dither output have correct output
     // brightness at different input brightness values.
-    float3 lookup = float3((0.5 * invXres + (1 - invXres) * brightness), 0, 0.5 * invZres);
-    fixed brightnessCurve = tex3D(_DitherTex, lookup).g;
+    float2 lookup = float2((0.5 * invXres + (1 - invXres) * brightness), 0.5);
+    fixed brightnessCurve = tex2D(_DitherRampTex, lookup).r;
 
     #if (RADIAL_COMPENSATION)
         // Make screenPos have 0,0 in the center of the screen.

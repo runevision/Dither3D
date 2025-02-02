@@ -39,6 +39,7 @@ public class Dither3DTextureMaker : MonoBehaviour
     static void CreateDither3DTexture(int recursion)
     {
         // Create Bayer points.
+        EditorUtility.DisplayProgressBar("Generating Dither Texture", "Bayer Points", 0.0f);
         List<Vector2> bayerPoints = new List<Vector2>();
         bayerPoints.Add(new Vector2(0.00f, 0.00f));
         bayerPoints.Add(new Vector2(0.50f, 0.50f));
@@ -68,7 +69,7 @@ public class Dither3DTextureMaker : MonoBehaviour
         int size = 16 * dotsPerSide;
 
         // Configure the texture.
-        Texture3D texture = new Texture3D(size, size, layers, TextureFormat.RGBA32, false);
+        Texture3D texture = new Texture3D(size, size, layers, TextureFormat.R8, false);
         texture.wrapMode = TextureWrapMode.Repeat;
         // Create a 3-dimensional array to store color data
         Color[] colors = new Color[size * size * layers];
@@ -80,6 +81,7 @@ public class Dither3DTextureMaker : MonoBehaviour
 
         // Populate the array so that the x, y, and z values of the texture will
         // map to red, blue, and green colors
+        EditorUtility.DisplayProgressBar("Generating Dither Texture", "Brightness Buckets", 0.2f);
         float invRes = 1.0f / size;
         for (int z = 0; z < layers; z++)
         {
@@ -117,6 +119,7 @@ public class Dither3DTextureMaker : MonoBehaviour
         }
 
         // Calculate brightness ramp.
+        EditorUtility.DisplayProgressBar("Generating Dither Texture", "Brightness Ramp", 0.4f);
         float[] brightnessRamp = new float[brightnessBuckets.Length + 1];
         int sum = 0;
         int pixelCount = (size * size * layers);
@@ -147,18 +150,8 @@ public class Dither3DTextureMaker : MonoBehaviour
             lookupRamp[i] = (higherIndex - 1 + l) / (brightnessRamp.Length - 1);
         }
 
-        // Write the lookup ramp into the green channel
-        // of the first layer of the 3d texture.
-        for (int y = 0; y < size; y++)
-        {
-            int yOffset = y * size;
-            for (int x = 0; x < size; x++)
-            {
-                colors[x + yOffset].g = lookupRamp[x];
-            }
-        }
-
         // Create 3D texture.
+        EditorUtility.DisplayProgressBar("Generating Dither Texture", "Create Assets", 0.8f);
         texture.SetPixels(colors);
         texture.Apply();
         string name = "Dither3D_" + dotsPerSide + "x" + dotsPerSide;
@@ -173,5 +166,21 @@ public class Dither3DTextureMaker : MonoBehaviour
         tex.Apply();
         byte[] bytes = tex.EncodeToPNG();
         System.IO.File.WriteAllBytes("Assets/Dither3D/" + name + ".png", bytes);
+
+        // Create ramp texture.
+        Texture2D textureRamp = new Texture2D(size, 1, TextureFormat.R8, false);
+        textureRamp.wrapMode = TextureWrapMode.Clamp;
+        textureRamp.anisoLevel = 0;
+        colors = new Color[size];
+        for (int x = 0; x < size; x++)
+        {
+            colors[x].r = lookupRamp[x];
+        }
+        textureRamp.SetPixels(colors);
+        textureRamp.Apply();
+        name = "Dither3D_" + dotsPerSide + "_Ramp";
+        AssetDatabase.CreateAsset(textureRamp, "Assets/Dither3D/" + name + ".asset");
+
+        EditorUtility.ClearProgressBar();
     }
 }
