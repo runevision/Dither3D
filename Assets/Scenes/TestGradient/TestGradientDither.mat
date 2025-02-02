@@ -35,8 +35,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _DirtherTex:
-        m_Texture: {fileID: 11700000, guid: f8c14933cd8df41c29224daa7bcca430, type: 2}
+    - _DitherRampTex:
+        m_Texture: {fileID: 2800000, guid: 1a8d9427121bbad4a9c83cb6d85f4198, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DitherTex:
@@ -70,6 +70,7 @@ Material:
     - _Contrast: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DitherMode: 3
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5

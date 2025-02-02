@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &2800000
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Dither3D_8_Ramp
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  serializedVersion: 2
+  m_Width: 128
+  m_Height: 1
+  m_CompleteImageSize: 128
+  m_TextureFormat: 63
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IgnoreMasterTextureLimit: 0
+  m_IsPreProcessed: 0
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 0
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_LightmapFormat: 0
+  m_ColorSpace: 0
+  image data: 128
+  _typelessdata: 000c14181b1e222427292b2d2f3133353638393b3c3e3f414243454647494a4b4c4d4f505152535455565758595a5b5c5d5e5f60616263646566666768696a6b6c6c6d6e6f7071727273747576767778797a7b7c7c7d7e7e7f808182838384858787898a8b8c8d8e8f919293959698999b9c9ea0a2a4a6a9abaeb2b6bcc3ceff
+  m_StreamData:
+    offset: 0
+    size: 0
+    path: 
