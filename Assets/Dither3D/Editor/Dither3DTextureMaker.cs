@@ -12,6 +12,8 @@ using UnityEngine;
 
 public class Dither3DTextureMaker : MonoBehaviour
 {
+    internal const string kTexturesPath = "Assets/Dither3D";
+
     [MenuItem("Assets/Create/Dither 3D Texture/Bayer 1x1")]
     static void CreateDither3DTexture1x1()
     {
@@ -155,7 +157,7 @@ public class Dither3DTextureMaker : MonoBehaviour
         texture.SetPixels(colors);
         texture.Apply();
         string name = "Dither3D_" + dotsPerSide + "x" + dotsPerSide;
-        AssetDatabase.CreateAsset(texture, "Assets/Dither3D/" + name + ".asset");
+        AssetDatabase.CreateAsset(texture, $"{kTexturesPath}/{name}/.asset");
 
         // Create 2D texture for inspection and debugging.
         // (Some versions of Unity can supposedly also create
@@ -165,10 +167,10 @@ public class Dither3DTextureMaker : MonoBehaviour
         tex.SetPixels(colors);
         tex.Apply();
         byte[] bytes = tex.EncodeToPNG();
-        System.IO.File.WriteAllBytes("Assets/Dither3D/" + name + ".png", bytes);
+        System.IO.File.WriteAllBytes($"{kTexturesPath}/{name}/.png", bytes);
 
         // Create ramp texture
-        CreateRampTexture("Dither3D_" + dotsPerSide + "_Ramp", lookupRamp);
+        CreateRampTexture($"Dither3D_{dotsPerSide}x{dotsPerSide}_Ramp", lookupRamp);
         EditorUtility.ClearProgressBar();
     }
 
@@ -183,7 +185,7 @@ public class Dither3DTextureMaker : MonoBehaviour
         tex.SetPixels(colors);
 
         byte[] bytes = tex.EncodeToPNG();
-        string path = $"Assets/Dither3D/{name}.png";
+        string path = $"{kTexturesPath}/{name}.png";
         System.IO.File.WriteAllBytes(path, bytes);
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
 
