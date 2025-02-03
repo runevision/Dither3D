@@ -36,7 +36,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DitherRampTex:
-        m_Texture: {fileID: 2800000, guid: 1a8d9427121bbad4a9c83cb6d85f4198, type: 2}
+        m_Texture: {fileID: 2800000, guid: 419773c4530aa874ca10a245f0675350, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DitherTex:

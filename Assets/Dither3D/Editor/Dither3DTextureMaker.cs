@@ -167,20 +167,40 @@ public class Dither3DTextureMaker : MonoBehaviour
         byte[] bytes = tex.EncodeToPNG();
         System.IO.File.WriteAllBytes("Assets/Dither3D/" + name + ".png", bytes);
 
-        // Create ramp texture.
-        Texture2D textureRamp = new Texture2D(size, 1, TextureFormat.R8, false);
-        textureRamp.wrapMode = TextureWrapMode.Clamp;
-        textureRamp.anisoLevel = 0;
-        colors = new Color[size];
-        for (int x = 0; x < size; x++)
-        {
-            colors[x].r = lookupRamp[x];
-        }
-        textureRamp.SetPixels(colors);
-        textureRamp.Apply();
-        name = "Dither3D_" + dotsPerSide + "_Ramp";
-        AssetDatabase.CreateAsset(textureRamp, "Assets/Dither3D/" + name + ".asset");
-
+        // Create ramp texture
+        CreateRampTexture("Dither3D_" + dotsPerSide + "_Ramp", lookupRamp);
         EditorUtility.ClearProgressBar();
+    }
+
+    static void CreateRampTexture(string name, float[] lookupRamp)
+    {
+        Texture2D tex = new Texture2D(lookupRamp.Length, 1, TextureFormat.R8, false);
+        Color[] colors = new Color[lookupRamp.Length];
+        for (int x = 0; x < lookupRamp.Length; x++)
+        {
+            colors[x] = new Color(lookupRamp[x], lookupRamp[x], lookupRamp[x], 1.0f);
+        }
+        tex.SetPixels(colors);
+
+        byte[] bytes = tex.EncodeToPNG();
+        string path = $"Assets/Dither3D/{name}.png";
+        System.IO.File.WriteAllBytes(path, bytes);
+        AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+
+        TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+        TextureImporterPlatformSettings settings = new TextureImporterPlatformSettings
+        {
+            name = "DefaultTexturePlatform",
+            overridden = true,
+            format = TextureImporterFormat.R8
+        };
+        importer.SetPlatformTextureSettings(settings);
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.sRGBTexture = false;
+        importer.mipmapEnabled = false;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.wrapMode = TextureWrapMode.Clamp;
+        importer.anisoLevel = 0;
+        importer.SaveAndReimport();
     }
 }

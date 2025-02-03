@@ -22,19 +22,19 @@ public class DitherPatternPropertyDrawer : MaterialPropertyDrawer
             {
                 case 0:
                     ditherTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_1x1.asset");
-                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_1_Ramp.asset");
+                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_1_Ramp.png");
                     break;
                 case 1:
                     ditherTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_2x2.asset");
-                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_2_Ramp.asset");
+                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_2_Ramp.png");
                     break;
                 case 2:
                     ditherTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_4x4.asset");
-                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_4_Ramp.asset");
+                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_4_Ramp.png");
                     break;
                 case 3:
                     ditherTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_8x8.asset");
-                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_8_Ramp.asset");
+                    ditherRampTex = AssetDatabase.LoadAssetAtPath<Texture>("Assets/Dither3D/Dither3D_8_Ramp.png");
                     break;
             }
 
