@@ -8,7 +8,7 @@ Here's a video explaining how it works:
 
 [![Surface-Stable Fractal Dithering video on YouTube](https://img.youtube.com/vi/HPqGaIMVuLs/0.jpg)](https://www.youtube.com/watch?v=HPqGaIMVuLs)
 
-This repository contains the shader and texture source files, and a Unity example project demonstrating their use. The example project is made with Unity 2019.4 and is also tested in Unity 2022.3 and Unity 6.
+This repository contains the shader and texture source files, and a Unity example project demonstrating their use. The example project is made with Unity 2019.4 and is also tested in Unity 2022.3 and Unity 6. It's based on the Forward rendering path in the Built-in Render Pipeline.
 
 The core implementation is located in the folder `Assets/Dither3D`. The remaining files relate to the Unity example project.
 
