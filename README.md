@@ -8,6 +8,10 @@ Here's a video explaining how it works:
 
 [![Surface-Stable Fractal Dithering video on YouTube](https://img.youtube.com/vi/HPqGaIMVuLs/0.jpg)](https://www.youtube.com/watch?v=HPqGaIMVuLs)
 
+And here's a feature demo video (with music!) showing color RGB dithering, CMYK halftone, true 1-bit low-res effects, and much more:
+
+[![Surface-Stable Fractal Dithering Demo video on YouTube](https://img.youtube.com/vi/EzjWBmhO_1E/0.jpg)](https://www.youtube.com/watch?v=HPqGaIMVuLs)
+
 This repository contains the shader and texture source files, and a Unity example project demonstrating their use. The example project is made with Unity 2019.4 and is also tested in Unity 2022.3 and Unity 6. It's based on the Forward rendering path in the Built-in Render Pipeline.
 
 The core implementation is located in the folder `Assets/Dither3D`. The remaining files relate to the Unity example project.
@@ -42,6 +46,10 @@ How much to smooth anisotropic dots (default 1).
 
 Furthermore, the following global toggle properties can be set via the `Dither3DGlobalProperties` component:
 
+- `Color Mode`  
+Can be set to Grayscale, RGB or CMYK. Grayscale converts the color to grayscale and runs the dithering once on that. RGB runs the dithering separately for the red, green and blue color channel. CMYK converts the color to CMYK, runs the dithering on each of those with traditional halftone rotations applied, and converts back to RGB.
+- `Inverse Dots`  
+For Grayscale and RGB, disabled produces bright dots on dark background (recommended) while enabled produces dark dots on light background. For CMYK, disabled produces dark dots on light background (like ink) while enabled produces light dots on dark background. Here, disabled works best if the shapes of the individual dots are clearly visible, but it can produce significant banding. For smaller dot sizes, enabled is recommended.
 - `Radial Compensation`  
 When using a perspective camera, dots must be larger towards the edge of the screen in order to be stable under camera rotation. The Radial Compensation feature can be enabled to achieve this.
 - `Quantize Layers`  
