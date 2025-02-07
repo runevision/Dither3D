@@ -16,12 +16,18 @@ public class Dither3DGlobalProperties : MonoBehaviour
 {
     static List<Material> ditherMaterials = new List<Material>();
 
+    public enum DitherColorMode { Grayscale, RGB, CMYK }
+
     [Header("Global Options")]
+    public DitherColorMode colorMode;
+
+    public bool inverseDots;
     public bool radialCompensation;
     public bool quantizeLayers;
     public bool debugFractal;
 
     [Header("Global Overrides")]
+    public bool setOnEnable = true;
     public bool saveInMaterials;
 
     [Space]
@@ -46,10 +52,16 @@ public class Dither3DGlobalProperties : MonoBehaviour
     [OverrideProperty] public float stretchSmoothness = 1;
     [HideInInspector] public bool stretchSmoothnessOverride;
 
+    [Header("Dots Scaling Behavior")]
+    public bool scaleWithScreen = true;
+    public int referenceRes = 1080;
+
     void OnEnable()
     {
         CollectMaterials();
-        UpdateProperties();
+        UpdateGlobalOptions();
+        if (setOnEnable)
+            UpdateGlobalOverrides();
     }
 
     void OnDisable()
@@ -61,7 +73,14 @@ public class Dither3DGlobalProperties : MonoBehaviour
         if (ditherMaterials != null && ditherMaterials.Count > 0 && ditherMaterials[0] == null)
             CollectMaterials();
 
-        UpdateProperties();
+        UpdateGlobalOptions();
+        UpdateGlobalOverrides();
+    }
+
+    void OnDidApplyAnimationProperties()
+    {
+        UpdateGlobalOptions();
+        UpdateGlobalOverrides();
     }
 
     void CollectMaterials()
@@ -77,7 +96,18 @@ public class Dither3DGlobalProperties : MonoBehaviour
         }
     }
 
-    void UpdateProperties()
+    void UpdateGlobalOptions()
+    {
+        EnableKeyword("DITHERCOL_GRAYSCALE", colorMode == DitherColorMode.Grayscale);
+        EnableKeyword("DITHERCOL_RGB", colorMode == DitherColorMode.RGB);
+        EnableKeyword("DITHERCOL_CMYK", colorMode == DitherColorMode.CMYK);
+        EnableKeyword("INVERSE_DOTS", inverseDots);
+        EnableKeyword("RADIAL_COMPENSATION", radialCompensation);
+        EnableKeyword("QUANTIZE_LAYERS", quantizeLayers);
+        EnableKeyword("DEBUG_FRACTAL", debugFractal);
+    }
+
+    void UpdateGlobalOverrides()
     {
         bool changed = false;
         if (inputExposureOverride)
@@ -85,7 +115,19 @@ public class Dither3DGlobalProperties : MonoBehaviour
         if (inputOffsetOverride)
             SetShaderOverride("_InputOffset", inputOffset, ref changed);
         if (dotScaleOverride)
-            SetShaderOverride("_Scale", dotScale, ref changed);
+        {
+            float shaderDotScale = dotScale;
+            if (scaleWithScreen)
+            {
+                float multiplier = Screen.height / referenceRes;
+                if (multiplier > 0f)
+                {
+                    float logDelta = Mathf.Log(multiplier, 2f);
+                    shaderDotScale += logDelta;
+                }
+            }
+            SetShaderOverride("_Scale", shaderDotScale, ref changed);
+        }
         if (dotSizeVariabilityOverride)
             SetShaderOverride("_SizeVariability", dotSizeVariability, ref changed);
         if (dotContrastOverride)
@@ -102,10 +144,6 @@ public class Dither3DGlobalProperties : MonoBehaviour
             }
         }
         #endif
-
-        EnableKeyword("RADIAL_COMPENSATION", radialCompensation);
-        EnableKeyword("QUANTIZE_LAYERS", quantizeLayers);
-        EnableKeyword("DEBUG_FRACTAL", debugFractal);
     }
 
     void EnableKeyword(string keyword, bool enable)

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 342cf6596452e4a29a5e7a924690e897
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - upscaleShader: {fileID: 4800000, guid: f4da39e2b66444bcebcc2e9c11cbb54b, type: 3}
+  - tex: {instanceID: 0}
+  - renderCam: {instanceID: 0}
+  - screenCam: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

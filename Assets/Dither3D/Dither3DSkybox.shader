@@ -40,9 +40,11 @@ Shader "Dither 3D/Skybox (6 Sided)"
         Cull Off ZWrite Off
 
         CGINCLUDE
-        #pragma shader_feature RADIAL_COMPENSATION
-        #pragma shader_feature QUANTIZE_LAYERS
-        #pragma shader_feature DEBUG_FRACTAL
+        #pragma multi_compile __ DITHERCOL_GRAYSCALE DITHERCOL_RGB DITHERCOL_CMYK
+        #pragma multi_compile __ INVERSE_DOTS
+        #pragma multi_compile __ RADIAL_COMPENSATION
+        #pragma multi_compile __ QUANTIZE_LAYERS
+        #pragma multi_compile __ DEBUG_FRACTAL
 
         #include "UnityCG.cginc"
         #include "Dither3DInclude.cginc"
@@ -110,7 +112,7 @@ Shader "Dither 3D/Skybox (6 Sided)"
             float a = v * 0.5 * UNITY_PI;
             v = 0.731746 * log(tan(a) + 1.0 / cos(a));
 
-            color = GetDither3DAltUV(float2(u, v), float2(u2, v), i.screenPos, GetGrayscale(color));
+            color = GetDither3DColorAltUV(float2(u, v), float2(u2, v), i.screenPos, color);
             return color;
         }
         ENDCG

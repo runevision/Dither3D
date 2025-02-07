@@ -43,9 +43,11 @@ Shader "Dither 3D/Cutout"
 
         #pragma target 3.5
         #pragma multi_compile_fog
-        #pragma shader_feature RADIAL_COMPENSATION
-        #pragma shader_feature QUANTIZE_LAYERS
-        #pragma shader_feature DEBUG_FRACTAL
+        #pragma multi_compile __ DITHERCOL_GRAYSCALE DITHERCOL_RGB DITHERCOL_CMYK
+        #pragma multi_compile __ INVERSE_DOTS
+        #pragma multi_compile __ RADIAL_COMPENSATION
+        #pragma multi_compile __ QUANTIZE_LAYERS
+        #pragma multi_compile __ DEBUG_FRACTAL
 
         #include "Dither3DInclude.cginc"
 
@@ -89,7 +91,7 @@ Shader "Dither 3D/Cutout"
         void mycolor (Input IN, SurfaceOutputStandard o, inout fixed4 color)
         {
             UNITY_APPLY_FOG(IN.fogCoord, color);
-            color = GetDither3D(IN.uv_DitherTex, IN.screenPos, GetGrayscale(color));
+            color = GetDither3DColor(IN.uv_DitherTex, IN.screenPos, color);
         }
         ENDCG
     }

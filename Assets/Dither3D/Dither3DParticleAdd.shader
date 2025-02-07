@@ -44,9 +44,10 @@ Shader "Dither 3D/Particles (Additive)"
                 #pragma target 2.0
                 #pragma multi_compile_particles
                 #pragma multi_compile_fog
-                #pragma shader_feature RADIAL_COMPENSATION
-                #pragma shader_feature QUANTIZE_LAYERS
-                #pragma shader_feature DEBUG_FRACTAL
+                #pragma multi_compile __ INVERSE_DOTS
+                #pragma multi_compile __ RADIAL_COMPENSATION
+                #pragma multi_compile __ QUANTIZE_LAYERS
+                #pragma multi_compile __ DEBUG_FRACTAL
 
                 #include "UnityCG.cginc"
                 #include "Dither3DInclude.cginc"
@@ -114,7 +115,7 @@ Shader "Dither 3D/Particles (Additive)"
                     UNITY_APPLY_FOG_COLOR(i.fogCoord, col, fixed4(0,0,0,0)); // fog towards black due to our blend mode
 
                     col = fixed4(col.rgb * col.a, 1);
-                    col = GetDither3D(i.texcoord, i.screenPos, GetGrayscale(col));
+                    col.rgb = GetDither3D(i.texcoord, i.screenPos, GetGrayscale(col)).x;
 
                     return col;
                 }

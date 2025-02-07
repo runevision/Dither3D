@@ -121,6 +121,70 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &43285670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 43285672}
+  - component: {fileID: 43285671}
+  m_Layer: 0
+  m_Name: GlobalProperties
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &43285671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43285670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e125df9991507453eaf633f12ee503f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorMode: 0
+  inverseDots: 0
+  radialCompensation: 0
+  quantizeLayers: 0
+  debugFractal: 0
+  setOnEnable: 1
+  saveInMaterials: 0
+  inputExposure: 1
+  inputExposureOverride: 0
+  inputOffset: 0
+  inputOffsetOverride: 0
+  dotScale: 5
+  dotScaleOverride: 0
+  dotSizeVariability: 0
+  dotSizeVariabilityOverride: 0
+  dotContrast: 1
+  dotContrastOverride: 0
+  stretchSmoothness: 1
+  stretchSmoothnessOverride: 0
+  scaleWithScreen: 1
+  referenceRes: 1080
+--- !u!4 &43285672
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43285670}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &262623324
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +314,7 @@ Transform:
   - {fileID: 1263031303}
   - {fileID: 1411418065}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &648840865
 GameObject:
@@ -593,7 +657,7 @@ Transform:
   m_Children:
   - {fileID: 648840867}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2081432865
 GameObject:
@@ -640,5 +704,5 @@ Transform:
   m_Children:
   - {fileID: 847309247}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -200, z: 0}

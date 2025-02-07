@@ -16,15 +16,14 @@ float _StretchSmoothness;
 float _InputExposure;
 float _InputOffset;
 
-fixed GetGrayscale(fixed4 color)
-{
-    return saturate(0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
-}
-
 // dx is the delta in u and v coordinates along the screen X axis.
 // dy is the delta in u and v coordinates along the screen Y axis.
 fixed4 GetDither3D_(float2 uv_DitherTex, float4 screenPos, float2 dx, float2 dy, fixed brightness)
 {
+    #if (INVERSE_DOTS)
+        brightness = 1.0 - brightness;
+    #endif
+
     // Get texture X resolution (width) based on Unity builtin data.
     // We assume the Y resolution is the same.
     float xRes = _DitherTex_TexelSize.z;
@@ -37,9 +36,6 @@ fixed4 GetDither3D_(float2 uv_DitherTex, float4 screenPos, float2 dx, float2 dy,
     float dotsPerSide = xRes / 16.0;
     float dotsTotal = pow(dotsPerSide, 2); // Could also have been named zRes
     float invZres = 1.0 / dotsTotal;
-
-    // Adjust brightness according to shader exposure and offset properties.
-    brightness = saturate(brightness * _InputExposure + _InputOffset);
 
     // Lookup brightness to make dither output have correct output
     // brightness at different input brightness values.
@@ -199,25 +195,24 @@ fixed4 GetDither3D_(float2 uv_DitherTex, float4 screenPos, float2 dx, float2 dy,
     // according to the contrast, and add the base value.
     fixed bw = saturate((pattern - threshold) * contrast + baseVal);
 
-    #if (DEBUG_FRACTAL)
-        fixed4 uvVis = fixed4(frac(uv.x), frac(uv.y), subLayer, bw);
-        return lerp(bw, uvVis, 0.7);
-    #else
-        return bw;
+    #if (INVERSE_DOTS)
+        bw = 1.0 - bw;
     #endif
+
+    return fixed4(bw, frac(uv.x), frac(uv.y), subLayer);
 }
 
-fixed4 GetDither3D(float2 uv_DitherTex, float4 screenPos, fixed brightness)
+fixed GetDither3D(float2 uv_DitherTex, float4 screenPos, fixed brightness)
 {
-    // The rates of change of the UV coordinates.
+    // Get the rates of change of the UV coordinates.
     float2 dx = ddx(uv_DitherTex);
     float2 dy = ddy(uv_DitherTex);
     return GetDither3D_(uv_DitherTex, screenPos, dx, dy, brightness);
 }
 
-fixed4 GetDither3DAltUV(float2 uv_DitherTex, float2 uv_DitherTexAlt, float4 screenPos, fixed brightness)
+fixed GetDither3DAltUV(float2 uv_DitherTex, float2 uv_DitherTexAlt, float4 screenPos, fixed brightness)
 {
-    // The rates of change of two sets of UV coordinates and use the smaller ones.
+    // Get the rates of change of two sets of UV coordinates and use the smaller ones.
     // This can remove seams caused by discontinuities in the UV coordinates,
     // as long as the alternative coordinates don't have seams in the same place.
     float2 dxA = ddx(uv_DitherTex);
@@ -227,4 +222,95 @@ fixed4 GetDither3DAltUV(float2 uv_DitherTex, float2 uv_DitherTexAlt, float4 scre
     float2 dx = dot(dxA, dxA) < dot(dxB, dxB) ? dxA : dxB;
     float2 dy = dot(dyA, dyA) < dot(dyB, dyB) ? dyA : dyB;
     return GetDither3D_(uv_DitherTex, screenPos, dx, dy, brightness);
+}
+
+// COLOR HANDLING
+
+fixed GetGrayscale(fixed4 color)
+{
+    return saturate(0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
+}
+
+fixed3 CMYKtoRGB(fixed4 cmyk) {
+    fixed c = cmyk.x;
+    fixed m = cmyk.y;
+    fixed y = cmyk.z;
+    fixed k = cmyk.w;
+
+    fixed invK = 1.0 - k;
+    fixed r = 1.0 - min(1.0, c * invK + k);
+    fixed g = 1.0 - min(1.0, m * invK + k);
+    fixed b = 1.0 - min(1.0, y * invK + k);
+    return saturate(fixed3(r, g, b));
+}
+
+fixed4 RGBtoCMYK(fixed3 rgb) {
+    fixed r = rgb.r;
+    fixed g = rgb.g;
+    fixed b = rgb.b;
+    fixed k = min(1.0 - r, min(1.0 - g, 1.0 - b));
+    fixed3 cmy = 0.0;
+    fixed invK = 1.0 - k;
+    if (invK != 0.0) {
+        cmy.x = (1.0 - r - k) / invK;
+        cmy.y = (1.0 - g - k) / invK;
+        cmy.z = (1.0 - b - k) / invK;
+    }
+    return saturate(fixed4(cmy, k));
+}
+
+float2 RotateUV(float2 uv, float2 xUnitDir)
+{
+    return uv.x * xUnitDir + uv.y * float2(-xUnitDir.y, xUnitDir.x);
+}
+
+fixed4 GetDither3DColor_(float2 uv_DitherTex, float4 screenPos, float2 dx, float2 dy, fixed4 color)
+{
+    // Adjust brightness according to shader exposure and offset properties.
+    color.rgb = saturate(color.rgb * _InputExposure + _InputOffset);
+    
+    #ifdef DITHERCOL_GRAYSCALE
+        fixed4 dither = GetDither3D_(uv_DitherTex, screenPos, dx, dy, GetGrayscale(color));
+        color.rgb = dither.x;
+        #if (DEBUG_FRACTAL)
+            fixed3 uvVis = dither.yzw;
+            color.rgb = lerp(color.rgb, uvVis, 0.7);
+        #endif
+    #elif DITHERCOL_RGB
+        color.r = GetDither3D_(uv_DitherTex, screenPos, dx, dy, color.r).x;
+        color.g = GetDither3D_(uv_DitherTex, screenPos, dx, dy, color.g).x;
+        color.b = GetDither3D_(uv_DitherTex, screenPos, dx, dy, color.b).x;
+    #elif DITHERCOL_CMYK
+        fixed4 cmyk = RGBtoCMYK(color.rgb);
+        // Get dither pattern for C, M, Y, K and angles 15, 75, 0, 45.
+        cmyk.x = GetDither3D_(RotateUV(uv_DitherTex, float2(0.966, 0.259)), screenPos, dx, dy, cmyk.x).x;
+        cmyk.y = GetDither3D_(RotateUV(uv_DitherTex, float2(0.259, 0.966)), screenPos, dx, dy, cmyk.y).x;
+        cmyk.z = GetDither3D_(RotateUV(uv_DitherTex, float2(1.000, 0.000)), screenPos, dx, dy, cmyk.z).x;
+        cmyk.w = GetDither3D_(RotateUV(uv_DitherTex, float2(0.707, 0.707)), screenPos, dx, dy, cmyk.w).x;
+        color.rgb = CMYKtoRGB(cmyk);
+    #endif
+
+    return color;
+}
+
+fixed4 GetDither3DColor(float2 uv_DitherTex, float4 screenPos, fixed4 color)
+{
+    // Get the rates of change of the UV coordinates.
+    float2 dx = ddx(uv_DitherTex);
+    float2 dy = ddy(uv_DitherTex);
+    return GetDither3DColor_(uv_DitherTex, screenPos, dx, dy, color);
+}
+
+fixed4 GetDither3DColorAltUV(float2 uv_DitherTex, float2 uv_DitherTexAlt, float4 screenPos, fixed4 color)
+{
+    // Get the rates of change of two sets of UV coordinates and use the smaller ones.
+    // This can remove seams caused by discontinuities in the UV coordinates,
+    // as long as the alternative coordinates don't have seams in the same place.
+    float2 dxA = ddx(uv_DitherTex);
+    float2 dyA = ddy(uv_DitherTex);
+    float2 dxB = ddx(uv_DitherTexAlt);
+    float2 dyB = ddy(uv_DitherTexAlt);
+    float2 dx = dot(dxA, dxA) < dot(dxB, dxB) ? dxA : dxB;
+    float2 dy = dot(dyA, dyA) < dot(dyB, dyB) ? dyA : dyB;
+    return GetDither3DColor_(uv_DitherTex, screenPos, dx, dy, color);
 }
